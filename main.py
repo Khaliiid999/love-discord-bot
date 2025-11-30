@@ -66,7 +66,7 @@ files = {
         "match",
     ],
     "ai": [
-        "text-gen",  # this is ai/text-gen.py
+        "text-gen",
     ],
     "events": [
         "welcome",
@@ -88,7 +88,7 @@ files = {
         "verify",
         "reactrole",
     ],
-}
+}  # ← only this one closing brace for the dict
 
 for folder in files:
     for file in files[folder]:
@@ -98,32 +98,8 @@ for folder in files:
         except Exception as e:
             print(f"Failed to load cog {folder}.{file}: {e}")
 
-
 if __name__ == "__main__":
     token = os.environ.get("TOKEN")
     if not token:
         raise RuntimeError("Set your Discord bot token in the TOKEN environment variable.")
-    bot.run(token)        "fun": [
-            "cat", "coin_flip", "dice", "greetings", "joke", "match"
-        ],
-        "ai": [
-            "image-gen", "text-gen"
-        ],
-        "events": [
-            "welcome"
-        ],
-        "economy": [
-            "balance", "daily", "leaderboard", "message_listener", "gambling", "pay"
-        ],
-        "moderation": [
-            "ban", "clear", "kick", "mute", "clone", "verify", "reactrole"
-        ]
-    }
-    
-    for folder in files:
-        for file in files[folder]:
-            bot.load_extension(f"{folder}.{file}")
-
-    # await bot._sync_application_commands()
-        
-bot.run(os.environ["TOKEN"])
+    bot.run(token)
