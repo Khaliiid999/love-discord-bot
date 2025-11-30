@@ -3,6 +3,8 @@ import disnake
 from disnake.ext import commands
 import sqlite3
 from economy.economy import Economy
+print("RAILWAY_PROJECT_ID:", os.environ.get("RAILWAY_PROJECT_ID"))
+print("TOKEN present?", "TOKEN" in os.environ)
 
 intents = disnake.Intents.default()
 intents.message_content = True  
@@ -56,5 +58,8 @@ async def on_ready():
             bot.load_extension(f"{folder}.{file}")
 
     # await bot._sync_application_commands()
-        
-bot.run(os.environ["TOKEN"])
+token = os.environ.get("TOKEN")
+if not token:
+    print("ERROR: TOKEN environment variable is not set")
+    exit(1)
+bot.run(token)
