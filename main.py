@@ -38,7 +38,7 @@ async def on_ready():
             "cat", "coin_flip", "dice", "greetings", "joke", "match"
         ],
         "ai": [
-            "image-gen", "text-gen"
+            "image-gen", "text_gen"
         ],
         "events": [
             "welcome"
