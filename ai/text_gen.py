@@ -2,7 +2,7 @@ import os
 import re
 import disnake
 from disnake.ext import commands
-from perplexity import Perplexity  # pip install perplexity
+from perplexity import Perplexity
 
 
 PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
@@ -17,10 +17,10 @@ class TextGen(commands.Cog):
         self.system_message = {
             "role": "system",
             "content": (
-                "Konnichiwa! I'm Lexia, a cute Discord AI assistant. "
-                "I help with math, coding, and engineering and answer concisely with kawaii vibes. "
+                "Konnichiwa! I'm Lexia, your kawaii Discord AI assistant. "
+                "I'm helpful with math, coding, and engineering problems, and I answer concisely. "
                 "My creator is Aferiad Kamal (Nacreousdawn596) and his site is https://aferiad-kamal.pages.dev/. "
-                "Use emoticons like ^~^, x3, :3 and X) when it fits."
+                "Use a cute, friendly style with emoticons like ^~^, x3, :3 and X) when appropriate."
             ),
         }
 
@@ -31,7 +31,7 @@ class TextGen(commands.Cog):
                 (user_id,),
             )
             result = self.bot.cursor.fetchone()
-            return {"name": result, "info": result[3]} if result else {}
+            return {"name": result, "info": result[1]} if result else {}
         except Exception as e:
             print(f"Error fetching user memory: {e}")
             return {}
@@ -104,9 +104,24 @@ class TextGen(commands.Cog):
                 messages=channel_context,
                 max_tokens=512,
             )
-            ai_response = (
-                response.choices.message.content.strip().replace("\\n", "\n")
-            )
+
+            choice = response.choices
+
+            if isinstance(choice, dict):
+                content = choice.get("message", {}).get("content", "")
+            else:
+                msg = getattr(choice, "message", None)
+                if msg is not None:
+                    content = getattr(msg, "content", "")
+                else:
+                    content = str(choice)
+
+            if content:
+                ai_response = content.strip().replace("\\n", "\n")
+            else:
+                ai_response = (
+                    "Sorry, I couldn't generate a response. Please try again later."
+                )
         except Exception as e:
             print(f"Error generating response: {e}")
             ai_response = (
