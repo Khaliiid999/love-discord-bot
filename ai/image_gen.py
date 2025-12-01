@@ -1,7 +1,9 @@
 import os
 import disnake
 import requests
-from disnake.ext import commandsPERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")class ImageGen(commands.Cog):
+from disnake.ext import commands
+PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+class ImageGen(commands.Cog):
 def init(self, bot):
 self.bot = bot
 
