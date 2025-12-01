@@ -29,7 +29,7 @@ class TextGen(commands.Cog):
                 (user_id,),
             )
             result = self.bot.cursor.fetchone()
-            return {"name": result, "info": result[1]} if result else {}
+            return {"name": result[0], "info": result[1]} if result else {}
         except Exception as e:
             print(f"Error fetching user memory: {e}")
             return {}
@@ -112,11 +112,14 @@ class TextGen(commands.Cog):
             resp.raise_for_status()
             data = resp.json()
 
-            # DEBUG: print the exact response shape to Railway logs
-            print("RAW PPLX RESPONSE:", data)
+            # data has keys: id, model, created, usage, citations, search_results, object, choices[...]
+            choice0 = data["choices"][0]
+            message = choice0["message"]
+            content = message["content"]
 
-            # For now, just send the whole data as text so it never crashes
-            ai_response = str(data)
+            ai_response = content.strip().replace("\
+", "
+")
         except Exception as e:
             print(f"Error generating response: {e}")
             ai_response = (
@@ -129,9 +132,9 @@ class TextGen(commands.Cog):
 
     def extract_personal_info(self, message: str):
         patterns = {
-            "name": re.compile(r"(my name is|i am|call me|I'm) (\w+)", re.IGNORECASE),
-            "hobby": re.compile(r"(i love|i like|i enjoy) (\w+)", re.IGNORECASE),
-            "job": re.compile(r"(i work as|i am a|I'm a) (\w+)", re.IGNORECASE),
+            "name": re.compile(r"(my name is|i am|call me|I'm) (w+)", re.IGNORECASE),
+            "hobby": re.compile(r"(i love|i like|i enjoy) (w+)", re.IGNORECASE),
+            "job": re.compile(r"(i work as|i am a|I'm a) (w+)", re.IGNORECASE),
         }
 
         for key, pattern in patterns.items():
