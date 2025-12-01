@@ -111,9 +111,7 @@ class TextGen(commands.Cog):
             message = choice0["message"]
             content = message["content"]
 
-            ai_response = content.strip().replace("\
-", "
-")
+            ai_response = content.strip().replace("\\n", "\n")
         except Exception as e:
             print(f"Error generating response: {e}")
             ai_response = (
