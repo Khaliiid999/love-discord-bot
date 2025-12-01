@@ -2,7 +2,7 @@ import os
 import re
 import disnake
 from disnake.ext import commands
-from perplexity import Client  # pip install perplexity
+from perplexity import Perplexity  # pip install perplexity
 
 
 PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
@@ -12,7 +12,7 @@ class TextGen(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        self.client = Client(api_key=PERPLEXITY_API_KEY)
+        self.client = Perplexity(api_key=PERPLEXITY_API_KEY)
 
         self.system_message = {
             "role": "system",
