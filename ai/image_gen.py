@@ -1,4 +1,5 @@
 import os
+import re
 import disnake
 import requests
 from disnake.ext import commands
@@ -29,7 +30,7 @@ class ImageGen(commands.Cog):
                         "content": f"Generate an image URL for this prompt: {text}",
                     }
                 ],
-                "max_tokens": 256,
+                "max_tokens": 512,
             }
 
             resp = requests.post(url, json=payload, headers=headers, timeout=60)
