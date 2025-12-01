@@ -112,11 +112,11 @@ class TextGen(commands.Cog):
             resp.raise_for_status()
             data = resp.json()
 
-            ai_response = (
-                data["choices"]["message"]["content"]
-                .strip()
-                .replace("\\n", "\n")
-            )
+            # DEBUG: print the exact response shape to Railway logs
+            print("RAW PPLX RESPONSE:", data)
+
+            # For now, just send the whole data as text so it never crashes
+            ai_response = str(data)
         except Exception as e:
             print(f"Error generating response: {e}")
             ai_response = (
