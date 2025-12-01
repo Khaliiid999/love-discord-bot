@@ -14,7 +14,7 @@ class TextGen(commands.Cog):
 
         self.system_message = {
             "role": "system",
-            "content": "You are Lexia, a cute and helpful Discord assistant. Answer briefly, clearly, and in a friendly style with some kawaii emoticons when it fits."
+            "content": "You are Love, a cute and helpful Discord assistant. Answer briefly, clearly, and in a friendly style with some kawaii emoticons when it fits."
         }
 
     def get_user_memory(self, user_id: int):
