@@ -107,14 +107,14 @@ class TextGen(commands.Cog):
 
             choice = response.choices
 
-            if isinstance(choice, dict):
-                content = choice.get("message", {}).get("content", "")
+            msg = getattr(choice, "message", None)
+            if msg is not None and getattr(msg, "content", None):
+                content = msg.content
             else:
-                msg = getattr(choice, "message", None)
-                if msg is not None:
-                    content = getattr(msg, "content", "")
+                if isinstance(choice, dict):
+                    content = choice.get("message", {}).get("content", "")
                 else:
-                    content = str(choice)
+                    content = ""
 
             if content:
                 ai_response = content.strip().replace("\\n", "\n")
