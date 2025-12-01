@@ -1,8 +1,8 @@
 import os
 import re
+import requests
 import disnake
 from disnake.ext import commands
-from perplexity import Perplexity
 
 
 PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
@@ -11,8 +11,6 @@ PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
 class TextGen(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-        self.client = Perplexity(api_key=PERPLEXITY_API_KEY)
 
         self.system_message = {
             "role": "system",
@@ -99,29 +97,26 @@ class TextGen(commands.Cog):
             return "API key is missing. Please set PERPLEXITY_API_KEY."
 
         try:
-            response = self.client.chat.completions.create(
-                model="sonar",
-                messages=channel_context,
-                max_tokens=512,
+            url = "https://api.perplexity.ai/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
+                "Content-Type": "application/json",
+            }
+            payload = {
+                "model": "sonar",
+                "messages": channel_context,
+                "max_tokens": 512,
+            }
+
+            resp = requests.post(url, json=payload, headers=headers, timeout=60)
+            resp.raise_for_status()
+            data = resp.json()
+
+            ai_response = (
+                data["choices"]["message"]["content"]
+                .strip()
+                .replace("\\n", "\n")
             )
-
-            choice = response.choices
-
-            msg = getattr(choice, "message", None)
-            if msg is not None and getattr(msg, "content", None):
-                content = msg.content
-            else:
-                if isinstance(choice, dict):
-                    content = choice.get("message", {}).get("content", "")
-                else:
-                    content = ""
-
-            if content:
-                ai_response = content.strip().replace("\\n", "\n")
-            else:
-                ai_response = (
-                    "Sorry, I couldn't generate a response. Please try again later."
-                )
         except Exception as e:
             print(f"Error generating response: {e}")
             ai_response = (
