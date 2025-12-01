@@ -1,8 +1,8 @@
 import os
 import re
 import disnake
-import requests
 from disnake.ext import commands
+from perplexity import Client  # pip install perplexity
 
 
 PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
@@ -12,13 +12,15 @@ class TextGen(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        self.client = Client(api_key=PERPLEXITY_API_KEY)
+
         self.system_message = {
             "role": "system",
             "content": (
-                "Konnichiwa! I'm Lexia, your kawaii Discord AI assistant. "
-                "I'm helpful with math, coding, and engineering problems, and I answer concisely. "
+                "Konnichiwa! I'm Lexia, a cute Discord AI assistant. "
+                "I help with math, coding, and engineering and answer concisely with kawaii vibes. "
                 "My creator is Aferiad Kamal (Nacreousdawn596) and his site is https://aferiad-kamal.pages.dev/. "
-                "Use a cute, friendly style with emoticons like ^~^, x3, :3 and X) when appropriate."
+                "Use emoticons like ^~^, x3, :3 and X) when it fits."
             ),
         }
 
@@ -29,7 +31,7 @@ class TextGen(commands.Cog):
                 (user_id,),
             )
             result = self.bot.cursor.fetchone()
-            return {"name": result, "info": result[1]} if result else {}
+            return {"name": result, "info": result[3]} if result else {}
         except Exception as e:
             print(f"Error fetching user memory: {e}")
             return {}
@@ -94,27 +96,16 @@ class TextGen(commands.Cog):
             )
 
         if not PERPLEXITY_API_KEY:
-            return "API key is missing. Please set PERPLEXITY_API_KEY in the bot host."
+            return "API key is missing. Please set PERPLEXITY_API_KEY."
 
         try:
-            url = "https://api.perplexity.ai/chat/completions"
-            headers = {
-                "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
-                "Content-Type": "application/json",
-            }
-            payload = {
-                "model": "sonar",
-                "messages": channel_context,
-                "max_tokens": 512,
-            }
-
-            resp = requests.post(url, json=payload, headers=headers, timeout=60)
-            resp.raise_for_status()
-            data = resp.json()
+            response = self.client.chat.completions.create(
+                model="sonar",
+                messages=channel_context,
+                max_tokens=512,
+            )
             ai_response = (
-                data["choices"]["message"]["content"]
-                .strip()
-                .replace("\\n", "\n")
+                response.choices.message.content.strip().replace("\\n", "\n")
             )
         except Exception as e:
             print(f"Error generating response: {e}")
