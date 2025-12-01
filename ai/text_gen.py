@@ -107,7 +107,6 @@ class TextGen(commands.Cog):
             resp.raise_for_status()
             data = resp.json()
 
-            # data has keys: id, model, created, usage, citations, search_results, object, choices[...]
             choice0 = data["choices"][0]
             message = choice0["message"]
             content = message["content"]
